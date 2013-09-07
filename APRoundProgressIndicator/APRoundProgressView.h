@@ -8,13 +8,20 @@
 
 #import <Foundation/Foundation.h>
 
+typedef enum {
+    APRoundProgressStyleCenter,
+    APRoundProgressStyleOut,
+    APRoundProgressStyleIn
+} APRoundProgressStyle;
 
 @interface APRoundProgressView : UIView
 
 @property (nonatomic) float radius;
-@property (nonatomic) float lineThickness;
-@property (nonatomic) float boldLineThickness;
-@property (nonatomic) UIColor *indicatorColor;
+@property (nonatomic) float trackWidth;
+@property (nonatomic) float progressWidth;
+@property (nonatomic) UIColor *progressColor;
+@property (nonatomic) UIColor *trackColor;
+@property (nonatomic) APRoundProgressStyle style;
 
 @property (nonatomic) float progress;
 

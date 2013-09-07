@@ -11,7 +11,6 @@
 
 @implementation APRoundProgressView
 {
-    UIColor *_unfilledIndicatorColor;
     CGRect _circleRect;
     CAShapeLayer *_progressCircle;
 }
@@ -19,31 +18,54 @@
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
+        self.backgroundColor = [UIColor clearColor];
         _radius = MIN(CGRectGetWidth(frame), CGRectGetHeight(frame))/2;
-        _circleRect = CGRectMake((CGRectGetWidth(frame)-2*_radius)/2, (CGRectGetHeight(frame)-2*_radius)/2, 2*_radius,
-                2*_radius);
-        _lineThickness = 2.0;
-        _unfilledIndicatorColor = [UIColor colorWithWhite:1.0 alpha:0.5];
+        _trackWidth = 2.0;
+        _progressWidth = 2.0;
+        _style = APRoundProgressStyleCenter;
+        _trackColor = [UIColor colorWithWhite:1.0 alpha:0.5];
         _progressCircle = [CAShapeLayer layer];
-        _progressCircle.path = [UIBezierPath bezierPathWithRoundedRect:_circleRect
-                                                          cornerRadius:_radius].CGPath;
         _progressCircle.strokeStart = 0.0;
         _progressCircle.strokeEnd = 0.0;
         _progressCircle.fillColor = [UIColor clearColor].CGColor;
         [self.layer addSublayer:_progressCircle];
-        self.backgroundColor = [UIColor clearColor];
-        self.boldLineThickness = 5.0;
-        self.indicatorColor = [UIColor whiteColor];
+        self.progressColor = [UIColor whiteColor];
+        [self updateGeometry];
     }
     return self;
 }
 
 - (void)drawRect:(CGRect)rect {
     CGContextRef context = UIGraphicsGetCurrentContext();
-
-    CGContextSetStrokeColorWithColor(context, _unfilledIndicatorColor.CGColor);
-    CGContextSetLineWidth(context, _lineThickness);
+    CGContextSetStrokeColorWithColor(context, _trackColor.CGColor);
+    CGContextSetLineWidth(context, _trackWidth);
     CGContextStrokeEllipseInRect(context, _circleRect);
+}
+
+- (void)updateGeometry
+{
+    float circleMidDiameter = 2*(_radius - _trackWidth/2);
+    _circleRect = CGRectMake((CGRectGetWidth(self.frame)-circleMidDiameter)/2,
+            (CGRectGetHeight(self.frame)-circleMidDiameter)/2, circleMidDiameter, circleMidDiameter);
+
+    float progressMidDiameter;
+    switch (self.style) {
+        case APRoundProgressStyleIn:
+            progressMidDiameter = circleMidDiameter -_trackWidth-_progressWidth;
+            break;
+        case APRoundProgressStyleOut:
+            progressMidDiameter = circleMidDiameter +_trackWidth+_progressWidth;
+            break;
+        case APRoundProgressStyleCenter:
+        default:
+            progressMidDiameter = circleMidDiameter;
+            break;
+    }
+    CGRect progressRect = CGRectMake((CGRectGetWidth(self.frame)-progressMidDiameter)/2,
+            (CGRectGetHeight(self.frame)-progressMidDiameter)/2, progressMidDiameter, progressMidDiameter);
+    _progressCircle.path = [UIBezierPath bezierPathWithRoundedRect:progressRect
+                                                      cornerRadius:progressMidDiameter/2].CGPath;
+    _progressCircle.lineWidth = _progressWidth;
 }
 
 - (void)setProgress:(float)progress animated:(BOOL)animated
@@ -71,16 +93,28 @@
     [self setProgress:progress animated:NO];
 }
 
-- (void)setBoldLineThickness:(float)boldLineThickness
+- (void)setProgressWidth:(float)progressWidth
 {
-    _boldLineThickness = boldLineThickness;
-    _progressCircle.lineWidth = _boldLineThickness;
+    _progressWidth = progressWidth;
+    [self updateGeometry];
 }
 
-- (void)setIndicatorColor:(UIColor *)indicatorColor
+- (void)setTrackWidth:(float)trackWidth
 {
-    _indicatorColor = indicatorColor;
-    _progressCircle.strokeColor = indicatorColor.CGColor;
+    _trackWidth = trackWidth;
+    [self updateGeometry];
+}
+
+- (void)setStyle:(APRoundProgressStyle)style
+{
+    _style = style;
+    [self updateGeometry];
+}
+
+- (void)setProgressColor:(UIColor *)progressColor
+{
+    _progressColor = progressColor;
+    _progressCircle.strokeColor = _progressColor.CGColor;
 }
 
 @end

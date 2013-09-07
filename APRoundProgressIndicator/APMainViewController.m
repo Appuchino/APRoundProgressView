@@ -27,6 +27,12 @@
     self.view.backgroundColor = [UIColor colorWithRed:0.310 green:0.812 blue:0.776 alpha:1];
     _progressView = [[APRoundProgressView alloc] initWithFrame:CGRectMake(0, 200, CGRectGetWidth(self.view.frame),
             250)];
+    _progressView.trackWidth = 1.0;
+    _progressView.progressWidth = 2.0;
+    _progressView.radius = 60.0;
+    _progressView.progressColor = [UIColor blueColor];
+    _progressView.trackColor = [UIColor blueColor];
+    _progressView.style = APRoundProgressStyleIn;
     [self.view addSubview:_progressView];
 
     _standardProgressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleBar];
