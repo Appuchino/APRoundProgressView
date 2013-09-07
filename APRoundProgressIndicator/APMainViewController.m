@@ -9,6 +9,7 @@
 #import "APMainViewController.h"
 #import "APRoundProgressView.h"
 
+#define FRAME_RATE 0.033
 
 @implementation APMainViewController
 {
@@ -55,12 +56,13 @@
 
 - (void)increaseProgress
 {
-    _currentProgressValue+=10;
-    if (_currentProgressValue > 100)
+    float totalProgressTime = 15;
+    float tickInProgress = FRAME_RATE/totalProgressTime;
+    _currentProgressValue+=tickInProgress;
+    if (_currentProgressValue > 1)
         _currentProgressValue = 0;
-    NSLog(@"Progress: %f", _currentProgressValue);
-    _progressView.progress = _currentProgressValue/100;
-    [_standardProgressView setProgress:_currentProgressValue/100 animated:YES];
+    _progressView.progress = _currentProgressValue;
+    [_standardProgressView setProgress:_currentProgressValue animated:NO];
 }
 
 - (void)sliderMoved:(id)sender
@@ -74,7 +76,7 @@
 {
     if (_timerSwitch.on == YES)
     {
-        _progressTimer = [NSTimer scheduledTimerWithTimeInterval:1
+        _progressTimer = [NSTimer scheduledTimerWithTimeInterval:FRAME_RATE
                                                           target:self
                                                         selector:@selector(increaseProgress)
                                                         userInfo:nil
