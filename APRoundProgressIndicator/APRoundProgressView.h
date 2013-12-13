@@ -22,7 +22,8 @@ typedef enum {
 @property (nonatomic) UIColor *progressColor;
 @property (nonatomic) UIColor *trackColor;
 @property (nonatomic) APRoundProgressStyle style;
-
+@property (readonly) UILabel *label;
 @property (nonatomic) float progress;
+@property (readonly) CGRect trackFrame;
 
 @end

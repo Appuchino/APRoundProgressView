@@ -1,0 +1,10 @@
+PODS:
+  - AngleGradientLayer (1.2.0)
+
+DEPENDENCIES:
+  - AngleGradientLayer
+
+SPEC CHECKSUMS:
+  AngleGradientLayer: bf58b9a84dc6bb3578c94c5d8db54eb8dac7d07e
+
+COCOAPODS: 0.28.0

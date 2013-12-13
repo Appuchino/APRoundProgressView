@@ -28,6 +28,7 @@
         _progressCircle.strokeStart = 0.0;
         _progressCircle.strokeEnd = 0.0;
         _progressCircle.fillColor = [UIColor clearColor].CGColor;
+        _label = [[UILabel alloc] initWithFrame:CGRectZero];
         [self.layer addSublayer:_progressCircle];
         self.progressColor = [UIColor whiteColor];
         [self updateGeometry];
@@ -40,6 +41,14 @@
     CGContextSetStrokeColorWithColor(context, _trackColor.CGColor);
     CGContextSetLineWidth(context, _trackWidth);
     CGContextStrokeEllipseInRect(context, _circleRect);
+    NSLog(@"Drawing track in rect x:%f, y:%f, w:%f, h:%f with width: %f", _circleRect.origin.x, _circleRect.origin.y, _circleRect.size.width, _circleRect.size.height, _trackWidth);
+//    CGContextRelease(context);
+
+}
+
+-(CGRect)trackFrame {
+    float delta = _trackWidth/2;
+    return CGRectMake(CGRectGetMinX(_circleRect) - delta, CGRectGetMinY(_circleRect) - delta, CGRectGetWidth(_circleRect) + _trackWidth, CGRectGetHeight(_circleRect) + _trackWidth);
 }
 
 - (void)updateGeometry
@@ -47,7 +56,7 @@
     float circleMidDiameter = 2*(_radius - _trackWidth/2);
     _circleRect = CGRectMake((CGRectGetWidth(self.frame)-circleMidDiameter)/2,
             (CGRectGetHeight(self.frame)-circleMidDiameter)/2, circleMidDiameter, circleMidDiameter);
-
+    
     float progressMidDiameter;
     switch (self.style) {
         case APRoundProgressStyleIn:
@@ -61,11 +70,16 @@
             progressMidDiameter = circleMidDiameter;
             break;
     }
+    
     CGRect progressRect = CGRectMake((CGRectGetWidth(self.frame)-progressMidDiameter)/2,
             (CGRectGetHeight(self.frame)-progressMidDiameter)/2, progressMidDiameter, progressMidDiameter);
     _progressCircle.path = [UIBezierPath bezierPathWithRoundedRect:progressRect
                                                       cornerRadius:progressMidDiameter/2].CGPath;
     _progressCircle.lineWidth = _progressWidth;
+
+    float minimumInnerRadius = MIN((_radius - _trackWidth/2), progressMidDiameter-_progressWidth);
+    
+    
 }
 
 - (void)setProgress:(float)progress animated:(BOOL)animated
@@ -111,10 +125,22 @@
     [self updateGeometry];
 }
 
+- (void)setRadius:(float)radius
+{
+    _radius = radius;
+    [self updateGeometry];
+}
+
 - (void)setProgressColor:(UIColor *)progressColor
 {
     _progressColor = progressColor;
     _progressCircle.strokeColor = _progressColor.CGColor;
 }
+
+-(void)setTrackColor:(UIColor *)trackColor {
+    _trackColor = trackColor;
+    [self setNeedsDisplay];
+}
+
 
 @end
